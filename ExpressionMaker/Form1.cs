@@ -11,10 +11,10 @@ using System.Text.RegularExpressions;
 
 namespace ExpressionMaker
 {
-    public partial class Form1 : Form
+    public partial class Dashboard : Form
     {
         List<string> validSyntax = new List<string>();
-        public Form1()
+        public Dashboard()
         {
             InitializeComponent();
         }
@@ -36,10 +36,11 @@ namespace ExpressionMaker
         private void Form1_Load(object sender, EventArgs e)
         {
             InitializeValidSyntax();
-            string expression = "{i}";  
+            string expression = "{i}";
             Console.WriteLine(expression);
             // for each variable in the expressin replacee it with a validSyntax expression
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < 5; j++)
+            {
                 int i = 0;
                 expression = Regex.Replace(expression, "{i}", m => string.Format("{{0}}", i++), RegexOptions.IgnoreCase); // replace all i with number
                 string[] expressionsToAdd = new string[i];
@@ -50,7 +51,7 @@ namespace ExpressionMaker
                     expressionsToAdd[i] = validSyntax[rand.Next(validSyntax.Count())];
 
                 }
-                
+
                 expression = String.Format(expression, expressionsToAdd);
                 Console.WriteLine(expression);
                 expression = Regex.Replace(expression, @"[0-9]+", m => "i", RegexOptions.IgnoreCase);
@@ -70,6 +71,11 @@ namespace ExpressionMaker
             string[] test = new string[] { "test", "test", "test"};
             Console.WriteLine("First {0} Second {1} Third {2}", test);
             */
+        }
+
+        private void btnGenerate_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
