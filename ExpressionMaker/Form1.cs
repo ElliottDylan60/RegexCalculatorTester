@@ -25,8 +25,7 @@ namespace ExpressionMaker
         // Used to move form around screen
         private bool mouseDown;
         private Point lastLocation;
-        //Expression test = new Expression("ln(tan(cos(3719^19272)*cos(183928^192384)))");
-        Expression test = new Expression("Log(10,Tan(Cos(5^5)*Cos(5^5)))");
+        Expression test = new Expression("-(-(5))");
         /// <summary>
         /// Initialize Components
         /// </summary>
@@ -39,17 +38,17 @@ namespace ExpressionMaker
         /// </summary>
         private void InitializeValidSyntax() {
             validSyntax.Add("({i})");
-            validSyntax.Add("-{i}");
+            validSyntax.Add("-({i})");
             validSyntax.Add("{i}+{i}");
             validSyntax.Add("{i}-{i}");
             validSyntax.Add("{i}*{i}");
             validSyntax.Add("{i}/{i}");
-            validSyntax.Add("{i}^{i}");
+            validSyntax.Add("Pow({i}, {i})");
             validSyntax.Add("Sin({i})");
             validSyntax.Add("Cos({i})");
             validSyntax.Add("Tan({i})");
-            validSyntax.Add("Csc({i})");
-            validSyntax.Add("Log(10,{i})");
+            //validSyntax.Add("Csc({i})");
+            validSyntax.Add("Log({i})");
             //validSyntax.Add("ln({i})");
         }
         /// <summary>
@@ -143,29 +142,48 @@ namespace ExpressionMaker
 
         private void Generator_DoWork(object sender, DoWorkEventArgs e)
         {
-            for (int a = 0; a < (int)numEquations.Value; a++)
+            for (int a = 0; a < (int)numEquations.Value; a++) // Generate given number of equation
             {
-                string expression = "{i}";
-                // for each variable in the expressin replacee it with a validSyntax expression
+                string expression = "{i}"; // start expression with single variable
+                // for each variable in the expressin replace it with a validSyntax expression
                 for (int j = 0; j < (int)numIterations.Value; j++)
                 {
-                    int i = 0;
-                    expression = Regex.Replace(expression, "{i}", m => string.Format("{{0}}", i++), RegexOptions.IgnoreCase); // replace all i with number
-                    string[] expressionsToAdd = new string[i];
+                    
+                    int i = 0; // number of expressions in equation
+                    expression = Regex.Replace(expression, "{i}", m => string.Format("{{0}}", i++)); // replace all i with number
+                    string[] expressionsToAdd = new string[i]; // create empty array with size equal to num expressions in equtaion
+                    // foreach expression in eqution, replace it with a random valid expression
                     while (i > 0)
                     {
                         i--;
                         Random rand = new Random(Guid.NewGuid().GetHashCode());
                         expressionsToAdd[i] = validSyntax[rand.Next(validSyntax.Count())];
                     }
-                    expression = String.Format(expression, expressionsToAdd);
-                    expression = Regex.Replace(expression, @"[0-9]+", m => "i", RegexOptions.IgnoreCase);
+                    expression = String.Format(expression, expressionsToAdd); // format expression
+                    expression = Regex.Replace(expression, @"[0-9]+", m => "i"); // replace all {0}...{n} with {i} : where n is an integer
                 }
+
+                // Convert {i} to random number/double
+                Random random = new Random(Guid.NewGuid().GetHashCode());
+                expression = Regex.Replace(expression, "{i}", m => (random.Next()%2==0) ? random.Next(9999).ToString() : Math.Round(random.NextDouble()*9999, 5).ToString());
+                expression = Regex.Replace(expression, "Log", "Log10");
                 // Report current generation percent
                 Generator.ReportProgress((int)((a / numEquations.Value) * 100), "Working...");
+
+
                 // Delegate to allow changes on sperate UI
                 this.Invoke((MethodInvoker)delegate{
-                    writeLog(expression + " ---------------- ", "PASSED\n", Color.Green);
+                    try
+                    {
+                        //writeLog(expression + " ---------------- ", "PASSED\n", Color.Green);
+                        Expression equation = new Expression("Round("+expression+",5)");
+                        writeLog(expression + " ---------------- ", equation.Evaluate() + "\n", Color.Green);
+
+                    }
+                    catch (EvaluationException) {
+                        Console.WriteLine(expression);
+                    }
+                    
                 });
             }
             Generator.ReportProgress(100, "Complete!");
@@ -178,3 +196,4 @@ namespace ExpressionMaker
         }
     }
 }
+//Sin(Tan(Tan(Tan(746)))^Tan(Tan(Tan(6898)))) 
