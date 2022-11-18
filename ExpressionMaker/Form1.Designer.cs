@@ -54,7 +54,7 @@
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.richTextBox1.ForeColor = System.Drawing.Color.LightGray;
-            this.richTextBox1.Location = new System.Drawing.Point(12, 180);
+            this.richTextBox1.Location = new System.Drawing.Point(12, 92);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(776, 244);
             this.richTextBox1.TabIndex = 0;
@@ -63,7 +63,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(25)))), ((int)(((byte)(25)))));
-            this.panel1.Location = new System.Drawing.Point(12, 172);
+            this.panel1.Location = new System.Drawing.Point(12, 84);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(776, 5);
             this.panel1.TabIndex = 1;
@@ -73,7 +73,7 @@
             this.btnGenerate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.btnGenerate.Font = new System.Drawing.Font("Gadugi", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGenerate.ForeColor = System.Drawing.Color.LightGray;
-            this.btnGenerate.Location = new System.Drawing.Point(699, 131);
+            this.btnGenerate.Location = new System.Drawing.Point(699, 43);
             this.btnGenerate.Name = "btnGenerate";
             this.btnGenerate.Size = new System.Drawing.Size(89, 35);
             this.btnGenerate.TabIndex = 41;
@@ -86,7 +86,7 @@
             this.lbEmpty.AutoSize = true;
             this.lbEmpty.Font = new System.Drawing.Font("Gadugi", 24F);
             this.lbEmpty.ForeColor = System.Drawing.Color.LightGray;
-            this.lbEmpty.Location = new System.Drawing.Point(215, 274);
+            this.lbEmpty.Location = new System.Drawing.Point(215, 186);
             this.lbEmpty.Name = "lbEmpty";
             this.lbEmpty.Size = new System.Drawing.Size(365, 39);
             this.lbEmpty.TabIndex = 42;
@@ -149,7 +149,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Gadugi", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.LightGray;
-            this.label1.Location = new System.Drawing.Point(194, 112);
+            this.label1.Location = new System.Drawing.Point(456, 36);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 42);
             this.label1.TabIndex = 51;
@@ -162,7 +162,7 @@
             this.numEquations.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.numEquations.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.numEquations.ForeColor = System.Drawing.Color.LightGray;
-            this.numEquations.Location = new System.Drawing.Point(12, 120);
+            this.numEquations.Location = new System.Drawing.Point(274, 44);
             this.numEquations.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -180,7 +180,7 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.LightGray;
-            this.panel2.Location = new System.Drawing.Point(12, 144);
+            this.panel2.Location = new System.Drawing.Point(274, 68);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(176, 3);
             this.panel2.TabIndex = 49;
@@ -190,7 +190,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Gadugi", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.LightGray;
-            this.label2.Location = new System.Drawing.Point(12, 92);
+            this.label2.Location = new System.Drawing.Point(274, 16);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(155, 25);
             this.label2.TabIndex = 52;
@@ -204,7 +204,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 430);
+            this.progressBar1.Location = new System.Drawing.Point(12, 342);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(776, 10);
             this.progressBar1.TabIndex = 53;
@@ -214,7 +214,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 367);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -232,6 +232,9 @@
             this.Name = "Dashboard";
             this.Text = "Calculator Tester";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Main_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Main_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Main_MouseUp);
             ((System.ComponentModel.ISupportInitialize)(this.numIterations)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numEquations)).EndInit();
             this.ResumeLayout(false);

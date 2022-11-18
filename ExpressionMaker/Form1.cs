@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using NCalc;
 
 namespace ExpressionMaker
 {
@@ -21,6 +22,11 @@ namespace ExpressionMaker
         /// All possible invalid syntax
         /// </summary>
         List<string> invalidSyntax = new List<string>();
+        // Used to move form around screen
+        private bool mouseDown;
+        private Point lastLocation;
+        //Expression test = new Expression("ln(tan(cos(3719^19272)*cos(183928^192384)))");
+        Expression test = new Expression("Log(10,Tan(Cos(5^5)*Cos(5^5)))");
         /// <summary>
         /// Initialize Components
         /// </summary>
@@ -39,12 +45,12 @@ namespace ExpressionMaker
             validSyntax.Add("{i}*{i}");
             validSyntax.Add("{i}/{i}");
             validSyntax.Add("{i}^{i}");
-            validSyntax.Add("sin({i})");
-            validSyntax.Add("cos({i})");
-            validSyntax.Add("tan({i})");
-            validSyntax.Add("csc({i})");
-            validSyntax.Add("log({i})");
-            validSyntax.Add("ln({i})");
+            validSyntax.Add("Sin({i})");
+            validSyntax.Add("Cos({i})");
+            validSyntax.Add("Tan({i})");
+            validSyntax.Add("Csc({i})");
+            validSyntax.Add("Log(10,{i})");
+            //validSyntax.Add("ln({i})");
         }
         /// <summary>
         /// Initialize invalid syntax list
@@ -52,21 +58,65 @@ namespace ExpressionMaker
         private void InitilizeInvalidSyntax() { 
         
         }
+        private void Main_MouseDown(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                mouseDown = true;
+                lastLocation = e.Location;
+            }
+            catch (Exception a)
+            {
+            }
+        }
+        private void Main_MouseUp(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                mouseDown = false;
+            }
+            catch (Exception a)
+            {
+            }
+        }
+        private void Main_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (mouseDown)
+                {
+                    this.Location = new Point(
+                        (this.Location.X - lastLocation.X) + e.X, (this.Location.Y - lastLocation.Y) + e.Y);
+
+                    this.Update();
+                }
+            }
+            catch (Exception a)
+            {
+            }
+        }
         /// <summary>
         /// When Form loads
         /// </summary>
         private void Form1_Load(object sender, EventArgs e)
         {
             InitializeValidSyntax();
+            test.Parameters["e"] = Math.E;
+            
+            Console.WriteLine(test.Evaluate().ToString());
         }
         /// <summary>
         /// Generate any number of equations
         /// </summary>
         private void btnGenerate_Click(object sender, EventArgs e)
         {
-            richTextBox1.Clear();
-            lbEmpty.Visible = false;
-            Generator.RunWorkerAsync();
+            richTextBox1.Clear(); // Clear Textbox
+            lbEmpty.Visible = false; // Hide label
+
+
+            btnGenerate.Enabled = false; // Disable button to prevent same thread from being initialized twice
+            Generator.RunWorkerAsync(); // Initialize thread
+            btnGenerate.Enabled = true; // Enable button
             
         }
         /// <summary>
@@ -86,6 +136,9 @@ namespace ExpressionMaker
 
             /// Normal
             richTextBox1.SelectionColor = richTextBox1.ForeColor;
+            
+            // Scroll to end of textbox
+            richTextBox1.ScrollToCaret();
         }
 
         private void Generator_DoWork(object sender, DoWorkEventArgs e)
