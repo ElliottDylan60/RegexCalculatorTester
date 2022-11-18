@@ -38,7 +38,14 @@
             this.lbIterations = new System.Windows.Forms.Label();
             this.lbInfo = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label1 = new System.Windows.Forms.Label();
+            this.numEquations = new System.Windows.Forms.NumericUpDown();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.Generator = new System.ComponentModel.BackgroundWorker();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.numIterations)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numEquations)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBox1
@@ -49,7 +56,7 @@
             this.richTextBox1.ForeColor = System.Drawing.Color.LightGray;
             this.richTextBox1.Location = new System.Drawing.Point(12, 180);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(776, 258);
+            this.richTextBox1.Size = new System.Drawing.Size(776, 244);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
@@ -100,6 +107,11 @@
             this.numIterations.Name = "numIterations";
             this.numIterations.Size = new System.Drawing.Size(176, 22);
             this.numIterations.TabIndex = 46;
+            this.numIterations.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             // 
             // panel13
             // 
@@ -132,12 +144,82 @@
             this.lbInfo.Text = "ⓘ";
             this.toolTip1.SetToolTip(this.lbInfo, "Complexity of generated equation");
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Gadugi", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.LightGray;
+            this.label1.Location = new System.Drawing.Point(194, 112);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 42);
+            this.label1.TabIndex = 51;
+            this.label1.Text = "ⓘ";
+            this.toolTip1.SetToolTip(this.label1, "Total number of equations to generate");
+            // 
+            // numEquations
+            // 
+            this.numEquations.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.numEquations.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.numEquations.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.numEquations.ForeColor = System.Drawing.Color.LightGray;
+            this.numEquations.Location = new System.Drawing.Point(12, 120);
+            this.numEquations.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numEquations.Name = "numEquations";
+            this.numEquations.Size = new System.Drawing.Size(176, 22);
+            this.numEquations.TabIndex = 50;
+            this.numEquations.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.LightGray;
+            this.panel2.Location = new System.Drawing.Point(12, 144);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(176, 3);
+            this.panel2.TabIndex = 49;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Gadugi", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.LightGray;
+            this.label2.Location = new System.Drawing.Point(12, 92);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(155, 25);
+            this.label2.TabIndex = 52;
+            this.label2.Text = "Total Equations";
+            // 
+            // Generator
+            // 
+            this.Generator.WorkerReportsProgress = true;
+            this.Generator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Generator_DoWork);
+            this.Generator.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.Generator_ProgressChanged);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 430);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(776, 10);
+            this.progressBar1.TabIndex = 53;
+            // 
             // Dashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.numEquations);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.lbInfo);
             this.Controls.Add(this.lbIterations);
             this.Controls.Add(this.numIterations);
@@ -151,6 +233,7 @@
             this.Text = "Calculator Tester";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numIterations)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numEquations)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,6 +250,12 @@
         private System.Windows.Forms.Label lbIterations;
         private System.Windows.Forms.Label lbInfo;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown numEquations;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label label2;
+        private System.ComponentModel.BackgroundWorker Generator;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 
