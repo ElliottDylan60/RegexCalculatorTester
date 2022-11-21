@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using NCalc;
+using Flee;
+using Flee.PublicTypes;
 
 namespace ExpressionMaker
 {
@@ -25,7 +27,9 @@ namespace ExpressionMaker
         // Used to move form around screen
         private bool mouseDown;
         private Point lastLocation;
-        Expression test = new Expression("-(-(5))");
+        Expression test = new Expression("3^2");
+        
+
         /// <summary>
         /// Initialize Components
         /// </summary>
@@ -100,9 +104,17 @@ namespace ExpressionMaker
         private void Form1_Load(object sender, EventArgs e)
         {
             InitializeValidSyntax();
-            test.Parameters["e"] = Math.E;
-            
-            Console.WriteLine(test.Evaluate().ToString());
+            //test.Parameters["e"] = Math.E;
+            //Console.WriteLine(test.Evaluate().ToString());
+
+            ExpressionContext context = new ExpressionContext();
+            context.Imports.AddType(typeof(CustomFunctions));
+
+            IDynamicExpression eDynamic = context.CompileDynamic("cos(5)");
+            Console.WriteLine(eDynamic.Evaluate().ToString());
+            /*
+             -(Cos(Tan(2259)/Tan(7749.65836)-Tan(6568)/Tan(4758.85968))) 
+             */
         }
         /// <summary>
         /// Generate any number of equations
@@ -175,6 +187,7 @@ namespace ExpressionMaker
                 this.Invoke((MethodInvoker)delegate{
                     try
                     {
+                        
                         //writeLog(expression + " ---------------- ", "PASSED\n", Color.Green);
                         Expression equation = new Expression("Round("+expression+",5)");
                         writeLog(expression + " ---------------- ", equation.Evaluate() + "\n", Color.Green);
@@ -196,4 +209,23 @@ namespace ExpressionMaker
         }
     }
 }
-//Sin(Tan(Tan(Tan(746)))^Tan(Tan(Tan(6898)))) 
+public static class CustomFunctions {
+    public static double sin(double val) { 
+        return Math.Sin((Math.PI / 180) * val);
+    }
+    public static double cos(double val) {
+        return Math.Cos((Math.PI/180) * val);
+    }
+    public static double tan(double val) {
+        return Math.Tan((Math.PI / 180) * val);
+    }
+    public static double cot(double val) {
+        return 1 / Math.Tan((Math.PI / 180) * val);
+    }
+    public static double log(double val) {
+        return Math.Log(val, 10);
+    }
+    public static double ln(double val) {
+        return Math.Log(val);
+    }
+}
