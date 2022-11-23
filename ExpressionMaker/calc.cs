@@ -34,7 +34,7 @@ namespace Calculator
                 case "+":
                 case "—":
                     return 1;
-                case "x":
+                case "*":
                 case "/":
                     return 2;
                 case "^":
@@ -62,7 +62,7 @@ namespace Calculator
         /// <returns>List of strings, i.e. the tokenized equation</returns>
         public List<string> TokenizeEquation(string equation)
         {
-            var delimiters = new[] { '(', '+', '—', 'x', '/', ')', '^', '-' }; // list of delimiters to separate from
+            var delimiters = new[] { '(', '+', '—', '*', '/', ')', '^', '-' }; // list of delimiters to separate from
             var buffer = ""; // buffer currently set to empty, used to determine large numbers
             var result = new List<string>(); // results stored as a list
             foreach (var ch in equation) // for each character in the equation
@@ -189,7 +189,7 @@ namespace Calculator
                         ans = a - b; // calculates first - second
                         stack.Push(ans.ToString()); // adds answer to stack
                     }
-                    else if (ch.Equals("x")) // if character is a 'x' sign
+                    else if (ch.Equals("*")) // if character is a '*' sign
                     {
                         string sa = (string)stack.Pop(); // get first number in stack
                         string sb = (string)stack.Pop(); // get second number in stack

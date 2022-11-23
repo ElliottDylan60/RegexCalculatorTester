@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using NCalc;
 using Flee;
 using Flee.PublicTypes;
+using Calculator;
 
 namespace ExpressionMaker
 {
@@ -39,7 +40,7 @@ namespace ExpressionMaker
             validSyntax.Add("({i})");
             validSyntax.Add("-({i})");
             validSyntax.Add("{i}+{i}");
-            validSyntax.Add("{i}-{i}");
+            validSyntax.Add("{i}—{i}");
             validSyntax.Add("{i}*{i}");
             validSyntax.Add("{i}/{i}");
             validSyntax.Add("{i}^{i}");
@@ -101,7 +102,7 @@ namespace ExpressionMaker
             ExpressionContext context = new ExpressionContext();
             context.Imports.AddType(typeof(CustomFunctions));
 
-            IDynamicExpression eDynamic = context.CompileDynamic("log(ln(-(3144^5157.02594))*-(7185^2314.95975))");
+            IDynamicExpression eDynamic = context.CompileDynamic("sin((3769^5271))*sin((9044^5073))");
             Console.WriteLine(eDynamic.Evaluate().ToString());
             /*
              -(cos(tan(2259)/tan(7749.65836)-tan(6568)/tan(4758.85968))) 
@@ -174,15 +175,35 @@ namespace ExpressionMaker
                 Generator.ReportProgress((int)((a / numEquations.Value) * 100), "Working...");
 
 
-                // Delegate to allow changes on sperate UI
+                // Delegate allows changes to UI on seperate thread
                 this.Invoke((MethodInvoker)delegate{
                     try
                     {
+                        Calc calculator = new Calc();
+                        
+                        
+                        string myAns = calculator.PostFixEvaluator(calculator.toPostFix(calculator.TokenizeEquation(expression)));
+
+                        expression = Regex.Replace(expression, "—", "-");
+                        expression = "Round(" + expression + ")";
 
                         ExpressionContext context = new ExpressionContext();
                         context.Imports.AddType(typeof(CustomFunctions));
                         IDynamicExpression eDynamic = context.CompileDynamic(expression);
-                        writeLog(expression + " ---------------- ", eDynamic.Evaluate().ToString() + "\n", Color.Green);
+                        string oracleAns = eDynamic.Evaluate().ToString();
+
+                        if (myAns.Equals(oracleAns))
+                        {
+                            //writeLog(expression + " ---------------- ", "Passed" + "\n", Color.Green);
+                        }
+                        else {
+                            writeLog(expression + " ---------------- ", myAns +" != " + oracleAns + "\n", Color.Red);
+                            
+                        }
+                        // —
+
+
+                       
 
                     }
                     catch (EvaluationException) {
@@ -200,7 +221,7 @@ namespace ExpressionMaker
         }
     }
 }
-// log(1565^1780+5456.55142^8360x6963.96565^5247.23636+610^6593)xlog(8160.07017^1190.95751+1773^5121.51305x8875^8401.86607+3336^5097.35324)
+
 public static class CustomFunctions {
     public static double sin(double val) { 
         return Math.Sin((Math.PI / 180) * val);
@@ -219,5 +240,8 @@ public static class CustomFunctions {
     }
     public static double ln(double val) {
         return Math.Log(val);
+    }
+    public static double Round(double val) {
+        return Math.Round(val, 5);
     }
 }
