@@ -44,6 +44,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.Generator = new System.ComponentModel.BackgroundWorker();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lbPassed = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numIterations)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numEquations)).BeginInit();
             this.SuspendLayout();
@@ -204,17 +205,29 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 342);
+            this.progressBar1.Location = new System.Drawing.Point(12, 369);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(776, 10);
             this.progressBar1.TabIndex = 53;
+            // 
+            // lbPassed
+            // 
+            this.lbPassed.AutoSize = true;
+            this.lbPassed.Font = new System.Drawing.Font("Gadugi", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbPassed.ForeColor = System.Drawing.Color.LightGray;
+            this.lbPassed.Location = new System.Drawing.Point(296, 335);
+            this.lbPassed.Name = "lbPassed";
+            this.lbPassed.Size = new System.Drawing.Size(204, 28);
+            this.lbPassed.TabIndex = 54;
+            this.lbPassed.Text = "1000/1000 Passed";
             // 
             // Dashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.ClientSize = new System.Drawing.Size(800, 367);
+            this.ClientSize = new System.Drawing.Size(800, 384);
+            this.Controls.Add(this.lbPassed);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -259,6 +272,7 @@
         private System.Windows.Forms.Label label2;
         private System.ComponentModel.BackgroundWorker Generator;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label lbPassed;
     }
 }
 
