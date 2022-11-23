@@ -20,14 +20,9 @@ namespace ExpressionMaker
         /// All possible valid syntax
         /// </summary>
         List<string> validSyntax = new List<string>();
-        /// <summary>
-        /// All possible invalid syntax
-        /// </summary>
-        List<string> invalidSyntax = new List<string>();
         // Used to move form around screen
         private bool mouseDown;
         private Point lastLocation;
-        Expression test = new Expression("3^2");
         
 
         /// <summary>
@@ -47,20 +42,15 @@ namespace ExpressionMaker
             validSyntax.Add("{i}-{i}");
             validSyntax.Add("{i}*{i}");
             validSyntax.Add("{i}/{i}");
-            validSyntax.Add("Pow({i}, {i})");
-            validSyntax.Add("Sin({i})");
-            validSyntax.Add("Cos({i})");
-            validSyntax.Add("Tan({i})");
-            //validSyntax.Add("Csc({i})");
-            validSyntax.Add("Log({i})");
-            //validSyntax.Add("ln({i})");
+            validSyntax.Add("{i}^{i}");
+            validSyntax.Add("sin({i})");
+            validSyntax.Add("cos({i})");
+            validSyntax.Add("tan({i})");
+            //validSyntax.Add("csc({i})");
+            validSyntax.Add("log({i})");
+            validSyntax.Add("ln({i})");
         }
-        /// <summary>
-        /// Initialize invalid syntax list
-        /// </summary>
-        private void InitilizeInvalidSyntax() { 
-        
-        }
+        #region moveForm
         private void Main_MouseDown(object sender, MouseEventArgs e)
         {
             try
@@ -98,6 +88,7 @@ namespace ExpressionMaker
             {
             }
         }
+        #endregion
         /// <summary>
         /// When Form loads
         /// </summary>
@@ -110,10 +101,10 @@ namespace ExpressionMaker
             ExpressionContext context = new ExpressionContext();
             context.Imports.AddType(typeof(CustomFunctions));
 
-            IDynamicExpression eDynamic = context.CompileDynamic("cos(5)");
+            IDynamicExpression eDynamic = context.CompileDynamic("log(ln(-(3144^5157.02594))*-(7185^2314.95975))");
             Console.WriteLine(eDynamic.Evaluate().ToString());
             /*
-             -(Cos(Tan(2259)/Tan(7749.65836)-Tan(6568)/Tan(4758.85968))) 
+             -(cos(tan(2259)/tan(7749.65836)-tan(6568)/tan(4758.85968))) 
              */
         }
         /// <summary>
@@ -178,7 +169,7 @@ namespace ExpressionMaker
                 // Convert {i} to random number/double
                 Random random = new Random(Guid.NewGuid().GetHashCode());
                 expression = Regex.Replace(expression, "{i}", m => (random.Next()%2==0) ? random.Next(9999).ToString() : Math.Round(random.NextDouble()*9999, 5).ToString());
-                expression = Regex.Replace(expression, "Log", "Log10");
+                
                 // Report current generation percent
                 Generator.ReportProgress((int)((a / numEquations.Value) * 100), "Working...");
 
@@ -187,10 +178,11 @@ namespace ExpressionMaker
                 this.Invoke((MethodInvoker)delegate{
                     try
                     {
-                        
-                        //writeLog(expression + " ---------------- ", "PASSED\n", Color.Green);
-                        Expression equation = new Expression("Round("+expression+",5)");
-                        writeLog(expression + " ---------------- ", equation.Evaluate() + "\n", Color.Green);
+
+                        ExpressionContext context = new ExpressionContext();
+                        context.Imports.AddType(typeof(CustomFunctions));
+                        IDynamicExpression eDynamic = context.CompileDynamic(expression);
+                        writeLog(expression + " ---------------- ", eDynamic.Evaluate().ToString() + "\n", Color.Green);
 
                     }
                     catch (EvaluationException) {
@@ -204,11 +196,11 @@ namespace ExpressionMaker
 
         private void Generator_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //Console.WriteLine(e.ProgressPercentage);
             progressBar1.Value = e.ProgressPercentage;
         }
     }
 }
+// log(1565^1780+5456.55142^8360x6963.96565^5247.23636+610^6593)xlog(8160.07017^1190.95751+1773^5121.51305x8875^8401.86607+3336^5097.35324)
 public static class CustomFunctions {
     public static double sin(double val) { 
         return Math.Sin((Math.PI / 180) * val);
