@@ -207,7 +207,7 @@ namespace Calculator
                         if (b == 0)
                         { // is denominator is a zero
                             stack.Clear(); // no need to continue computing results
-                            stack.Push("Divide By Zero"); // theres a divide by zero error
+                            stack.Push("NaN"); // theres a divide by zero error
                             break; // break out of loop
                         }
                         ans = a / b; // calculates first / second    

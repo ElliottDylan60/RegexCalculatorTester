@@ -21,6 +21,7 @@ namespace ExpressionMaker
         /// All possible valid syntax
         /// </summary>
         List<string> validSyntax = new List<string>();
+        List<string> syntaxErrors = new List<string>() { "NaN", "Divide By Zero", "-∞", "∞"};
         // Used to move form around screen
         private bool mouseDown;
         private Point lastLocation;
@@ -32,6 +33,12 @@ namespace ExpressionMaker
         public Dashboard()
         {
             InitializeComponent();
+            ExpressionContext context = new ExpressionContext();
+            context.Imports.AddType(typeof(CustomFunctions));
+            IDynamicExpression eDynamic = context.CompileDynamic("log(0)");
+            Console.WriteLine(eDynamic.Evaluate().ToString());
+            //Console.WriteLine(Math.Log10(0));
+            writeLog("", Math.Log10(0).ToString(), Color.Red);
         }
         /// <summary>
         /// Initialize valid syntax list
@@ -96,17 +103,6 @@ namespace ExpressionMaker
         private void Form1_Load(object sender, EventArgs e)
         {
             InitializeValidSyntax();
-            //test.Parameters["e"] = Math.E;
-            //Console.WriteLine(test.Evaluate().ToString());
-
-            ExpressionContext context = new ExpressionContext();
-            context.Imports.AddType(typeof(CustomFunctions));
-
-            IDynamicExpression eDynamic = context.CompileDynamic("sin((3769^5271))*sin((9044^5073))");
-            Console.WriteLine(eDynamic.Evaluate().ToString());
-            /*
-             -(cos(tan(2259)/tan(7749.65836)-tan(6568)/tan(4758.85968))) 
-             */
         }
         /// <summary>
         /// Generate any number of equations
@@ -133,7 +129,7 @@ namespace ExpressionMaker
             richTextBox1.AppendText(Message);
             richTextBox1.SelectionStart = richTextBox1.TextLength;
 
-            /// Red
+            /// Color
             richTextBox1.SelectionColor = color;
             richTextBox1.AppendText(colorMessage);
 
@@ -174,47 +170,65 @@ namespace ExpressionMaker
                 // Report current generation percent
                 Generator.ReportProgress((int)((a / numEquations.Value) * 100), "Working...");
 
-
-                // Delegate allows changes to UI on seperate thread
-                this.Invoke((MethodInvoker)delegate{
-                    try
-                    {
-                        Calc calculator = new Calc();
-                        
-                        
-                        string myAns = calculator.PostFixEvaluator(calculator.toPostFix(calculator.TokenizeEquation(expression)));
-
-                        expression = Regex.Replace(expression, "—", "-");
-                        expression = "Round(" + expression + ")";
-
-                        ExpressionContext context = new ExpressionContext();
-                        context.Imports.AddType(typeof(CustomFunctions));
-                        IDynamicExpression eDynamic = context.CompileDynamic(expression);
-                        string oracleAns = eDynamic.Evaluate().ToString();
-
-                        if (myAns.Equals(oracleAns))
-                        {
-                            //writeLog(expression + " ---------------- ", "Passed" + "\n", Color.Green);
-                        }
-                        else {
-                            writeLog(expression + " ---------------- ", myAns +" != " + oracleAns + "\n", Color.Red);
-                            
-                        }
-                        // —
-
-
-                       
-
-                    }
-                    catch (EvaluationException) {
-                        Console.WriteLine(expression);
-                    }
-                    
-                });
+                EvalualteExpressoins(expression);
+                
             }
             Generator.ReportProgress(100, "Complete!");
         }
+        /// <summary>
+        /// Compares given expression between oracle and my math function
+        /// </summary>
+        /// <param name="expression">Expression to evaluate</param>
+        private void EvalualteExpressoins(string expression) {
+            // Delegate allows changes to UI on seperate thread
+            this.Invoke((MethodInvoker)delegate {
+                try
+                {
+                    Calc calculator = new Calc();
 
+
+                    string myAns = calculator.PostFixEvaluator(calculator.toPostFix(calculator.TokenizeEquation(expression)));
+
+                    expression = Regex.Replace(expression, "—", "-");
+
+
+                    expression = "Round(" + expression + ")";
+                    string oracleAns;
+                    try
+                    {
+                        ExpressionContext context = new ExpressionContext();
+                        context.Imports.AddType(typeof(CustomFunctions));
+                        IDynamicExpression eDynamic = context.CompileDynamic(expression);
+                        oracleAns = eDynamic.Evaluate().ToString();
+                    }
+                    catch (DivideByZeroException) {
+                        oracleAns = "Syntax Error";
+                    }
+
+                    if (syntaxErrors.Contains(oracleAns) || syntaxErrors.Contains(myAns))
+                    {
+                        oracleAns = "Syntax Error";
+                        myAns = "Syntax Error";
+                    }
+
+                    if (myAns.Equals(oracleAns))
+                    {
+                        //writeLog(expression + " ---------------- ", "Passed" + "\n", Color.Green);
+                    }
+                    else
+                    {
+                        writeLog(expression + " ---------------- ", myAns + " != " + oracleAns + "\n", Color.Red);
+
+                    }
+
+                }
+                catch (EvaluationException)
+                {
+                    Console.WriteLine(expression);
+                }
+
+            });
+        }
         private void Generator_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar1.Value = e.ProgressPercentage;
