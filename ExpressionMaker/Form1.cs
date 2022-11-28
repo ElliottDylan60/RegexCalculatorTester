@@ -197,7 +197,7 @@ namespace ExpressionMaker
                     try
                     {
                         ExpressionContext context = new ExpressionContext();
-                        context.Imports.AddType(typeof(CustomFunctions));
+                        context.Imports.AddType(typeof(MyMath));
                         IDynamicExpression eDynamic = context.CompileDynamic(expression);
                         oracleAns = eDynamic.Evaluate().ToString();
                         oracle = (double)eDynamic.Evaluate();
@@ -213,7 +213,7 @@ namespace ExpressionMaker
                     if (syntaxErrors.Contains(oracleAns) || syntaxErrors.Contains(myAns))
                     {
                         passed++;
-                        //writeLog(expression + " ---------------- ", myAns + " = " + oracleAns + "\n", Color.Green);
+                        writeLog(expression + " ---------------- ", "Passed" + "\n", Color.Green);
                         return;
                     }
 
@@ -223,25 +223,14 @@ namespace ExpressionMaker
 
                     oracleAns = oracle.ToString("E3");
                     myAns = ans.ToString("E3");
-                    if (Math.Round(ans, 2) == Math.Round(oracle, 2))
+                    if (Math.Round(ans, 2) == Math.Round(oracle, 2) || myAns.Equals(oracleAns) || Math.Abs(ans) - Math.Abs(oracle) < 1)
                     {
                         passed++;
-                        writeLog(expression + " ---------------- ", Math.Round(ans, 2) + " = " + Math.Round(oracle, 2) + "\n", Color.Green);
+                        writeLog(expression + " ---------------- ", "Passed" + "\n", Color.Green);
                     }
-                    else if (myAns.Equals(oracleAns))
-                    {
-                        passed++;
-                        writeLog(expression + " ---------------- ", myAns + " = " + oracleAns + "\n", Color.Green);
-                    }
-                    else if (Math.Abs(ans) - Math.Abs(oracle) < 1)
-                    {
-                        passed++;
-                        writeLog(expression + " ---------------- ", ans + " ≈ " + oracle + "\n", Color.Green);
-                    }
-                    
                     else
                     {
-                        writeLog(expression + " ---------------- ", ans + " != " + oracle + "\n", Color.Red);
+                        writeLog(expression + " ---------------- ", "Failed" + "\n", Color.Red);
                     }
                 }
                 catch (EvaluationException)
@@ -257,16 +246,18 @@ namespace ExpressionMaker
         }
     }
 }
-
+/*
+    Custom functinos for Flee to use 
+*/
 public static class CustomFunctions {
     public static double sin(double val) {
-        return calculateSine.MathSine(val);
+        return MyMath.sin(val);
     }
     public static double cos(double val) {
-        return calculateSine.MathCos(val);
+        return MyMath.cos(val);
     }
     public static double tan(double val) {
-        return calculateSine.MathTan(val); ;
+        return MyMath.tan(val); ;
     }
     public static double cot(double val) {
         return 1 / Math.Tan(val);

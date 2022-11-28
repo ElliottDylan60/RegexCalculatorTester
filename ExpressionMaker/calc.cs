@@ -242,19 +242,19 @@ namespace Calculator
                     {
 
                         string sa = (string)stack.Pop(); // get first number in stack
-                        ans = (decimal)calculateSine.MathSine(Convert.ToDouble(sa));
+                        ans = (decimal)MyMath.sin(Convert.ToDouble(sa));
                         stack.Push(ans.ToString("0." + new string('#', 339))); // push result to stacl
                     }
                     else if (ch.Equals("cos")) // if token is a 'cos' function
                     {
                         string sa = (string)stack.Pop(); // get first number in stack
-                        ans = (decimal)calculateSine.MathCos(Convert.ToDouble(sa));
+                        ans = (decimal)MyMath.cos(Convert.ToDouble(sa));
                         stack.Push(ans.ToString()); // push result to stack
                     }
                     else if (ch.Equals("tan")) // if token is a 'tan' function
                     {
                         string sa = (string)stack.Pop(); // get first number from stack
-                        ans = (decimal)calculateSine.MathTan(Convert.ToDouble(sa));
+                        ans = (decimal)MyMath.tan(Convert.ToDouble(sa));
                         stack.Push(ans.ToString()); // push result to stack
                     }
                     else if (ch.Equals("cot"))
