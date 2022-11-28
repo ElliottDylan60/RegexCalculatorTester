@@ -12,6 +12,7 @@ using NCalc;
 using Flee;
 using Flee.PublicTypes;
 using Calculator;
+using ExpressionMaker;
 
 namespace ExpressionMaker
 {
@@ -21,7 +22,7 @@ namespace ExpressionMaker
         /// All possible valid syntax
         /// </summary>
         List<string> validSyntax = new List<string>();
-        List<string> syntaxErrors = new List<string>() { "NaN", "Divide By Zero", "-∞", "∞"};
+        List<string> syntaxErrors = new List<string>() { "NaN", "Divide By Zero", "-∞", "∞", "Syntax Error"};
         // Used to move form around screen
         private bool mouseDown;
         private Point lastLocation;
@@ -33,21 +34,6 @@ namespace ExpressionMaker
         public Dashboard()
         {
             InitializeComponent();
-            /*
-            ExpressionContext context = new ExpressionContext();
-            context.Imports.AddType(typeof(CustomFunctions));
-            //context.Imports.AddType(typeof(Math));
-            IDynamicExpression eDynamic = context.CompileDynamic("sin(45)");
-            // Round(sin(-(3973.69552*4035/6737*5162.8766))-sin(-(1058*2252/3903*8749.2459))) ---------------- 1.43016 != 1.07912
-            Console.WriteLine(eDynamic.Evaluate().ToString());
-            //Console.WriteLine(Math.Log10(0));
-            writeLog("", eDynamic.Evaluate().ToString(), Color.Red);*/
-            //TestEvalualteExpressoins("(ln((2922.3651)*(5859.4465)))^(ln((601.2285)*(7237.41621)))");
-            TestEvalualteExpressoins("(ln((-(-(2922.36513)))*(-(-(5859.4465)))))^(ln((-(-(601.2285)))*(-(-(7237.41621)))))");
-            double d = 0.1231235;
-            string formattedValue = d.ToString("E3");
-            Console.WriteLine(formattedValue);
-            //(ln((-(-(2922.36513)))*(-(-(5859.4465)))))^(ln((-(-(601.2285)))*(-(-(7237.41621)))))
         }
         /// <summary>
         /// Initialize valid syntax list
@@ -59,11 +45,10 @@ namespace ExpressionMaker
             validSyntax.Add("{i}—{i}");
             validSyntax.Add("{i}*{i}");
             validSyntax.Add("{i}/{i}");
-            validSyntax.Add("({i})^({i})");
+            validSyntax.Add("{i}^{i}");
             validSyntax.Add("sin({i})");
             validSyntax.Add("cos({i})");
             validSyntax.Add("tan({i})");
-            //validSyntax.Add("csc({i})");
             validSyntax.Add("log({i})");
             validSyntax.Add("ln({i})");
         }
@@ -178,7 +163,7 @@ namespace ExpressionMaker
 
                 // Convert {i} to random number/double
                 Random random = new Random(Guid.NewGuid().GetHashCode());
-                expression = Regex.Replace(expression, "{i}", m => (random.Next()%2==0) ? Math.Round(random.NextDouble() * 9999, 5).ToString() : Math.Round(random.NextDouble()*9999, 5).ToString());
+                expression = Regex.Replace(expression, "{i}", m => (random.Next()%2==0) ? Math.Round(random.NextDouble() * 100, 5).ToString() : Math.Round(random.NextDouble()*9999, 5).ToString());
                 
                 // Report current generation percent
                 Generator.ReportProgress((int)((a / numEquations.Value) * 100), "Working...");
@@ -202,22 +187,27 @@ namespace ExpressionMaker
 
 
                     string myAns = calculator.PostFixEvaluator(calculator.toPostFix(calculator.TokenizeEquation(expression)));
-
+                    
                     expression = Regex.Replace(expression, "—", "-");
 
 
-                    expression = "Round(" + expression + ")";
+                    //expression = "Round(" + expression + ")";
                     string oracleAns;
+                    double oracle = 0;
                     try
                     {
                         ExpressionContext context = new ExpressionContext();
                         context.Imports.AddType(typeof(CustomFunctions));
                         IDynamicExpression eDynamic = context.CompileDynamic(expression);
                         oracleAns = eDynamic.Evaluate().ToString();
+                        oracle = (double)eDynamic.Evaluate();
                     }
                     catch (DivideByZeroException)
                     {
                         oracleAns = "Syntax Error";
+                    }
+                    catch (Exception) {
+                        return;
                     }
 
                     if (syntaxErrors.Contains(oracleAns) || syntaxErrors.Contains(myAns))
@@ -227,19 +217,32 @@ namespace ExpressionMaker
                         return;
                     }
 
-                    double myAnswer = Convert.ToDouble(myAns);
-                    double oracle = Convert.ToDouble(oracleAns);
-                    if ((Math.Abs(myAnswer) - Math.Abs(oracle)) < 1)
+
+                    double ans = Convert.ToDouble(myAns);
+                    //ans = Math.Round(ans, 0);
+
+                    oracleAns = oracle.ToString("E3");
+                    myAns = ans.ToString("E3");
+                    if (Math.Round(ans, 2) == Math.Round(oracle, 2))
                     {
                         passed++;
-                        //writeLog(expression + " ---------------- ", myAns + " = " + oracleAns + "\n", Color.Green);
+                        writeLog(expression + " ---------------- ", Math.Round(ans, 2) + " = " + Math.Round(oracle, 2) + "\n", Color.Green);
                     }
+                    else if (myAns.Equals(oracleAns))
+                    {
+                        passed++;
+                        writeLog(expression + " ---------------- ", myAns + " = " + oracleAns + "\n", Color.Green);
+                    }
+                    else if (Math.Abs(ans) - Math.Abs(oracle) < 1)
+                    {
+                        passed++;
+                        writeLog(expression + " ---------------- ", ans + " ≈ " + oracle + "\n", Color.Green);
+                    }
+                    
                     else
                     {
-                        writeLog(expression + " ---------------- ", (Math.Abs(myAnswer) - Math.Abs(oracle)) + "\n", Color.Red);
-
+                        writeLog(expression + " ---------------- ", ans + " != " + oracle + "\n", Color.Red);
                     }
-
                 }
                 catch (EvaluationException)
                 {
@@ -247,64 +250,6 @@ namespace ExpressionMaker
                 }
 
             });
-        }
-        private void TestEvalualteExpressoins(string expression)
-        {
-                try
-                {
-                    Calc calculator = new Calc();
-
-
-                    string myAns = calculator.PostFixEvaluator(calculator.toPostFix(calculator.TokenizeEquation(expression)));
-
-                    expression = Regex.Replace(expression, "—", "-");
-
-
-                    expression = "Round(" + expression + ")";
-                    string oracleAns;
-                    try
-                    {
-                        ExpressionContext context = new ExpressionContext();
-                        context.Imports.AddType(typeof(CustomFunctions));
-                        IDynamicExpression eDynamic = context.CompileDynamic(expression);
-                        oracleAns = eDynamic.Evaluate().ToString();
-                    }
-                    catch (DivideByZeroException)
-                    {
-                        oracleAns = "Syntax Error";
-                    }
-
-                    if (syntaxErrors.Contains(oracleAns) || syntaxErrors.Contains(myAns))
-                    {
-                        oracleAns = "Syntax Error";
-                        myAns = "Syntax Error";
-                    }
-                    double myAnswer = Convert.ToDouble(myAns);
-               // d.ToString("E3");
-                double oracle = Convert.ToDouble(oracleAns);
-                if (myAnswer.ToString("E3").Equals(oracle.ToString("E3"))) {
-                    passed++;
-                    writeLog(expression + " ---------------- ", myAns + " = " + oracleAns + "\n", Color.Green);
-                }
-                else if ((Math.Abs(myAnswer) - Math.Abs(oracle)) < 1)
-                {
-                    passed++;
-                    writeLog(expression + " ---------------- ", myAns + " = " + oracleAns + "\n", Color.Green);
-                }
-                else
-                {
-                    //writeLog(expression + " ---------------- ", (Math.Abs(myAnswer) - Math.Abs(oracle)) + "\n", Color.Red);
-                    writeLog(expression + " ---------------- ", myAns + " != " + oracleAns + "\n", Color.Red);
-
-                }
-
-                }
-                catch (EvaluationException)
-                {
-                    Console.WriteLine(expression);
-                }
-
-            
         }
         private void Generator_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -315,16 +260,16 @@ namespace ExpressionMaker
 
 public static class CustomFunctions {
     public static double sin(double val) {
-        return Math.Sin((Math.PI / 180) * val);
+        return calculateSine.MathSine(val);
     }
     public static double cos(double val) {
-        return Math.Cos((Math.PI/180) * val);
+        return calculateSine.MathCos(val);
     }
     public static double tan(double val) {
-        return Math.Tan((Math.PI / 180) * val);
+        return calculateSine.MathTan(val); ;
     }
     public static double cot(double val) {
-        return 1 / Math.Tan((Math.PI / 180) * val);
+        return 1 / Math.Tan(val);
     }
     public static double log(double val) {
         return Math.Log(val, 10);
@@ -334,9 +279,5 @@ public static class CustomFunctions {
     }
     public static double Round(double val) {
         return Math.Round(val, 5);
-    }
-    public static double Sum(double a, double b) {
-        Console.WriteLine("Here");
-        return a + b;
     }
 }
