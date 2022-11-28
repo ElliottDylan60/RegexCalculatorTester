@@ -22,7 +22,7 @@ namespace Calculator
         /// <summary>
         /// List of Error Types to check for before calling syntax error
         /// </summary>
-        List<string> ErrorTypes = new List<string>() { "Divide By Zero", "Syntax Error" };
+        List<string> ErrorTypes = new List<string>() { "Divide By Zero", "Syntax Error" , "Overflow"};
 
         /// <summary>
         /// Determins the precedence of each operator
@@ -217,45 +217,97 @@ namespace Calculator
                     }
                     else if (ch.Equals("^")) // if character is a '^' sign
                     { // if character is a '^' sign
-                        string sa = (string)stack.Pop(); // get first number in stack
-                        string sb = (string)stack.Pop(); // get second number in stack
-                        a = Convert.ToDecimal(sb); // convert string to double
-                        b = Convert.ToDecimal(sa); // convert string to double
-                        ans = (decimal)Math.Pow((double)a, (double)b); // calculates first / second
-                        stack.Push(ans.ToString("0." + new string('#', 339))); // adds answer to stack
+                        try
+                        {
+                            string sa = (string)stack.Pop(); // get first number in stack
+                            string sb = (string)stack.Pop(); // get second number in stack
+                            a = Convert.ToDecimal(sb); // convert string to double
+                            b = Convert.ToDecimal(sa); // convert string to double
+                            ans = (decimal)Math.Pow((double)a, (double)b); // calculates first / second
+                            stack.Push(ans.ToString("0." + new string('#', 339))); // adds answer to stack
+                        }
+                        catch (OverflowException) {
+                            stack.Clear();
+                            stack.Push("Overflow");
+                            break;
+                        }
                     }
                     else if (ch.Equals("ln")) // if token is an 'ln' function
                     {
-                        string sa = (string)stack.Pop(); // get first number in stack
-                        a = Convert.ToDecimal(sa); // convert string to double
-                        ans = (decimal)Math.Log((double)a); // calculate log of number in base e
-                        stack.Push(ans.ToString()); // push number to stack
+                        try
+                        {
+                            string sa = (string)stack.Pop(); // get first number in stack
+                            a = Convert.ToDecimal(sa); // convert string to double
+                            ans = (decimal)Math.Log((double)a); // calculate log of number in base e
+                            stack.Push(ans.ToString()); // push number to stack
+                        }
+                        catch (OverflowException)
+                        {
+                            stack.Clear();
+                            stack.Push("Overflow");
+                            break;
+                        }
                     }
                     else if (ch.Equals("log")) // if token is a 'log' function
                     {
-                        string sa = (string)stack.Pop(); // get first number in stack
-                        a = Convert.ToDecimal(sa); // convert string to double
-                        ans = (decimal)Math.Log10((double)a); // calculate log of number in base 10
-                        stack.Push(ans.ToString()); // push result to stack
+                        try
+                        {
+                            string sa = (string)stack.Pop(); // get first number in stack
+                            a = Convert.ToDecimal(sa); // convert string to double
+                            ans = (decimal)Math.Log10((double)a); // calculate log of number in base 10
+                            stack.Push(ans.ToString()); // push result to stack
+                        }
+                        catch (OverflowException)
+                        {
+                            stack.Clear();
+                            stack.Push("Overflow");
+                            break;
+                        }
                     }
                     else if (ch.Equals("sin")) // if token is a 'sin' function
                     {
-
-                        string sa = (string)stack.Pop(); // get first number in stack
-                        ans = (decimal)MyMath.sin(Convert.ToDouble(sa));
-                        stack.Push(ans.ToString("0." + new string('#', 339))); // push result to stacl
+                        try
+                        {
+                            string sa = (string)stack.Pop(); // get first number in stack
+                            ans = (decimal)MyMath.sin(Convert.ToDouble(sa));
+                            stack.Push(ans.ToString("0." + new string('#', 339))); // push result to stack
+                        }
+                        catch (OverflowException)
+                        {
+                            stack.Clear();
+                            stack.Push("Overflow");
+                            break;
+                        }
                     }
                     else if (ch.Equals("cos")) // if token is a 'cos' function
                     {
-                        string sa = (string)stack.Pop(); // get first number in stack
-                        ans = (decimal)MyMath.cos(Convert.ToDouble(sa));
-                        stack.Push(ans.ToString()); // push result to stack
+                        try
+                        {
+                            string sa = (string)stack.Pop(); // get first number in stack
+                            ans = (decimal)MyMath.cos(Convert.ToDouble(sa));
+                            stack.Push(ans.ToString()); // push result to stack
+                        }
+                        catch (OverflowException)
+                        {
+                            stack.Clear();
+                            stack.Push("Overflow");
+                            break;
+                        }
                     }
                     else if (ch.Equals("tan")) // if token is a 'tan' function
                     {
-                        string sa = (string)stack.Pop(); // get first number from stack
-                        ans = (decimal)MyMath.tan(Convert.ToDouble(sa));
-                        stack.Push(ans.ToString()); // push result to stack
+                        try
+                        {
+                            string sa = (string)stack.Pop(); // get first number from stack
+                            ans = (decimal)MyMath.tan(Convert.ToDouble(sa));
+                            stack.Push(ans.ToString()); // push result to stack
+                        }
+                        catch (OverflowException)
+                        {
+                            stack.Clear();
+                            stack.Push("Overflow");
+                            break;
+                        }
                     }
                     else if (ch.Equals("cot"))
                     {
@@ -305,13 +357,8 @@ namespace Calculator
                 }*/
                 string result = (string)stack.Pop(); // pop result
 
-                if (ErrorTypes.Contains(result))// if result is an error
-                {
-                    return result; // return error type
-                }
-                decimal resultAns = Convert.ToDecimal(result); // convert result to double
                 //resultAns = Math.Round(resultAns, 5); // round result to 5 decimal points
-                return resultAns.ToString(); // final number in stack is the answer
+                return result.ToString(); // final number in stack is the answer
             }
             catch (Exception err) // Error has ben caught, send syntax error to user
             {

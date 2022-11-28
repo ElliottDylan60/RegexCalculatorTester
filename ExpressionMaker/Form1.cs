@@ -22,7 +22,7 @@ namespace ExpressionMaker
         /// All possible valid syntax
         /// </summary>
         List<string> validSyntax = new List<string>();
-        List<string> syntaxErrors = new List<string>() { "NaN", "Divide By Zero", "-∞", "∞", "Syntax Error"};
+        List<string> syntaxErrors = new List<string>() { "NaN", "Divide By Zero", "-∞", "∞", "Syntax Error", "Overflow"};
         // Used to move form around screen
         private bool mouseDown;
         private Point lastLocation;
@@ -172,6 +172,7 @@ namespace ExpressionMaker
                 
             }
             Generator.ReportProgress(100, "Complete!");
+            
         }
         /// <summary>
         /// Compares given expression between oracle and my math function
@@ -202,12 +203,12 @@ namespace ExpressionMaker
                         oracleAns = eDynamic.Evaluate().ToString();
                         oracle = (double)eDynamic.Evaluate();
                     }
-                    catch (DivideByZeroException)
+                    catch (OverflowException)
                     {
-                        oracleAns = "Syntax Error";
+                        oracleAns = "Overflow";
                     }
                     catch (Exception) {
-                        return;
+                        oracleAns = "Syntax Error";
                     }
 
                     if (syntaxErrors.Contains(oracleAns) || syntaxErrors.Contains(myAns))
