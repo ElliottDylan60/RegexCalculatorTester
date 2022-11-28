@@ -57,6 +57,7 @@
             this.richTextBox1.ForeColor = System.Drawing.Color.LightGray;
             this.richTextBox1.Location = new System.Drawing.Point(12, 92);
             this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(776, 244);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
@@ -101,7 +102,7 @@
             this.numIterations.ForeColor = System.Drawing.Color.LightGray;
             this.numIterations.Location = new System.Drawing.Point(12, 44);
             this.numIterations.Maximum = new decimal(new int[] {
-            1000000,
+            10,
             0,
             0,
             0});
@@ -143,7 +144,7 @@
             this.lbInfo.Size = new System.Drawing.Size(44, 42);
             this.lbInfo.TabIndex = 48;
             this.lbInfo.Text = "ⓘ";
-            this.toolTip1.SetToolTip(this.lbInfo, "Complexity of generated equation");
+            this.toolTip1.SetToolTip(this.lbInfo, "Complexity of generated equation (Max: 10)");
             // 
             // label1
             // 
@@ -155,7 +156,7 @@
             this.label1.Size = new System.Drawing.Size(44, 42);
             this.label1.TabIndex = 51;
             this.label1.Text = "ⓘ";
-            this.toolTip1.SetToolTip(this.label1, "Total number of equations to generate");
+            this.toolTip1.SetToolTip(this.label1, "Total number of equations to generate (Max: 5000)");
             // 
             // numEquations
             // 
@@ -165,7 +166,7 @@
             this.numEquations.ForeColor = System.Drawing.Color.LightGray;
             this.numEquations.Location = new System.Drawing.Point(274, 44);
             this.numEquations.Maximum = new decimal(new int[] {
-            1000000,
+            5000,
             0,
             0,
             0});
