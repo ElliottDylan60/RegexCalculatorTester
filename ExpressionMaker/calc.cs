@@ -313,9 +313,7 @@ namespace Calculator
                     {
                         
                         string sa = (string)stack.Pop(); // get first number from stack
-                        a = Convert.ToDecimal(sa); // convert string to double
-                        ans = (decimal)(Math.Cos((Math.PI / 180) * (double)a)) / (decimal)(Math.Sin((Math.PI / 180) * (double)a)); // Multiple a by pi/180 to convert to radians
-                        
+                        ans = (decimal)MyMath.cot(Convert.ToDouble(sa));
                         stack.Push(ans.ToString()); // push result to stack
                     }
                     else if (ch.Equals("-"))  // if character is an '-' function

@@ -11,18 +11,22 @@ namespace ExpressionMaker
     {
         public static double sin(double num)
         {
-            double test = Convert.ToDouble(((decimal)num).ToString());
-            return Math.Sin(test);
+            double convert = Convert.ToDouble(((decimal)num).ToString());
+            return Math.Sin(convert);
         }
         public static double cos(double num)
         {
-            double test = Convert.ToDouble(((decimal)num).ToString());
-            return Math.Cos(test);
+            double convert = Convert.ToDouble(((decimal)num).ToString());
+            return Math.Cos(convert);
         }
         public static double tan(double num)
         {
-            double test = Convert.ToDouble(((decimal)num).ToString());
-            return Math.Tan(test);
+            double convert = Convert.ToDouble(((decimal)num).ToString());
+            return Math.Tan(convert);
+        }
+        public static double cot(double num) {
+            double convert = Convert.ToDouble(((decimal)num).ToString());
+            return (Math.Cos(convert)) / (Math.Sin(convert));
         }
     }
 }

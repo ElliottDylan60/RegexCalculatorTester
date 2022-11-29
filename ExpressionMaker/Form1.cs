@@ -28,6 +28,7 @@ namespace ExpressionMaker
         private Point lastLocation;
         int passed = 0;
         int total = 0;
+        bool stop = false;
         /// <summary>
         /// Initialize Components
         /// </summary>
@@ -98,29 +99,43 @@ namespace ExpressionMaker
         {
             InitializeValidSyntax();
         }
+        #region UI
         /// <summary>
         /// Generate any number of equations
         /// </summary>
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+
+
+            if (stop)
+            {
+                btnGenerate.Text = "Generate";
+                stop = false;
+                Console.WriteLine("Stopping");
+                return;
+            }
+            stop = true;
+            btnGenerate.Text = "Stop";
+            Console.WriteLine("Starting");
+
             passed = 0;
             total = (int)numEquations.Value;
             richTextBox1.Clear(); // Clear Textbox
             lbEmpty.Visible = false; // Hide label
 
-
-            btnGenerate.Enabled = false; // Disable button to prevent same thread from being initialized twice
             Generator.RunWorkerAsync(); // Initialize thread
-            btnGenerate.Enabled = true; // Enable button
-            
+
         }
+        #endregion
+        #region HelperFunctins
         /// <summary>
         /// Writes to rich text box
         /// </summary>
         /// <param name="Message">Print first part as normal color</param>
         /// <param name="redMessage">Print second part as specified color</param>
         /// <param name="color">Color of second part</param>
-        private void writeLog(string Message, string colorMessage, Color color) {
+        private void writeLog(string Message, string colorMessage, Color color)
+        {
             /// Normal
             richTextBox1.AppendText(Message);
             richTextBox1.SelectionStart = richTextBox1.TextLength;
@@ -131,22 +146,36 @@ namespace ExpressionMaker
 
             /// Normal
             richTextBox1.SelectionColor = richTextBox1.ForeColor;
-            
+
             // Scroll to end of textbox
             richTextBox1.ScrollToCaret();
-
+        }
+        /// <summary>
+        /// Updates the total passed equations
+        /// </summary>
+        private void updateTotal()
+        {
             lbPassed.Text = passed + "/" + total + " Passed";
         }
+        #endregion
 
+        #region ExpressionGenerator
         private void Generator_DoWork(object sender, DoWorkEventArgs e)
         {
             for (int a = 0; a < (int)numEquations.Value; a++) // Generate given number of equation
             {
+                if (!stop)
+                {
+                    total = a;
+                    stop = false;
+                    Generator.ReportProgress(100, "Complete!");
+                    return;
+                }
                 string expression = "{i}"; // start expression with single variable
                 // for each variable in the expressin replace it with a validSyntax expression
                 for (int j = 0; j < (int)numIterations.Value; j++)
                 {
-                    
+
                     int i = 0; // number of expressions in equation
                     expression = Regex.Replace(expression, "{i}", m => string.Format("{{0}}", i++)); // replace all i with number
                     string[] expressionsToAdd = new string[i]; // create empty array with size equal to num expressions in equtaion
@@ -163,16 +192,15 @@ namespace ExpressionMaker
 
                 // Convert {i} to random number/double
                 Random random = new Random(Guid.NewGuid().GetHashCode());
-                expression = Regex.Replace(expression, "{i}", m => (random.Next()%2==0) ? Math.Round(random.NextDouble() * 100, 5).ToString() : Math.Round(random.NextDouble()*9999, 5).ToString());
-                
+                expression = Regex.Replace(expression, "{i}", m => (random.Next() % 2 == 0) ? Math.Round(random.NextDouble() * 100, 5).ToString() : Math.Round(random.NextDouble() * 9999, 5).ToString());
+
                 // Report current generation percent
                 Generator.ReportProgress((int)((a / numEquations.Value) * 100), "Working...");
-
                 EvalualteExpressoins(expression);
-                
+
             }
             Generator.ReportProgress(100, "Complete!");
-            
+
         }
         /// <summary>
         /// Compares given expression between oracle and my math function
@@ -185,14 +213,10 @@ namespace ExpressionMaker
                 try
                 {
                     Calc calculator = new Calc();
-
-
                     string myAns = calculator.PostFixEvaluator(calculator.toPostFix(calculator.TokenizeEquation(expression)));
-                    
+
                     expression = Regex.Replace(expression, "—", "-");
 
-
-                    //expression = "Round(" + expression + ")";
                     string oracleAns;
                     double oracle = 0;
                     try
@@ -207,7 +231,8 @@ namespace ExpressionMaker
                     {
                         oracleAns = "Overflow";
                     }
-                    catch (Exception) {
+                    catch (Exception)
+                    {
                         oracleAns = "Syntax Error";
                     }
 
@@ -220,7 +245,6 @@ namespace ExpressionMaker
 
 
                     double ans = Convert.ToDouble(myAns);
-                    //ans = Math.Round(ans, 0);
 
                     oracleAns = oracle.ToString("E3");
                     myAns = ans.ToString("E3");
@@ -241,12 +265,29 @@ namespace ExpressionMaker
 
             });
         }
+        
         private void Generator_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar1.Value = e.ProgressPercentage;
+            updateTotal();
+        }
+
+        private void Generator_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            btnGenerate.Text = "Generate";
+            stop = false;
+        }
+
+
+        #endregion
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
+#region CustomFleeFunctions
 /*
     Custom functinos for Flee to use 
 */
@@ -273,3 +314,4 @@ public static class CustomFunctions {
         return Math.Round(val, 5);
     }
 }
+#endregion

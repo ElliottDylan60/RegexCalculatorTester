@@ -45,8 +45,10 @@
             this.Generator = new System.ComponentModel.BackgroundWorker();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lbPassed = new System.Windows.Forms.Label();
+            this.btnClose = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.numIterations)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numEquations)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnClose)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBox1
@@ -203,6 +205,7 @@
             this.Generator.WorkerReportsProgress = true;
             this.Generator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Generator_DoWork);
             this.Generator.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.Generator_ProgressChanged);
+            this.Generator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.Generator_RunWorkerCompleted);
             // 
             // progressBar1
             // 
@@ -222,12 +225,25 @@
             this.lbPassed.TabIndex = 54;
             this.lbPassed.Text = "1000/1000 Passed";
             // 
+            // btnClose
+            // 
+            this.btnClose.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnClose.Image = global::ExpressionMaker.Properties.Resources.Close__Custom___1_;
+            this.btnClose.Location = new System.Drawing.Point(765, 4);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(30, 30);
+            this.btnClose.TabIndex = 56;
+            this.btnClose.TabStop = false;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
             // Dashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.ClientSize = new System.Drawing.Size(800, 384);
+            this.Controls.Add(this.btnGenerate);
+            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lbPassed);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label2);
@@ -239,7 +255,6 @@
             this.Controls.Add(this.numIterations);
             this.Controls.Add(this.panel13);
             this.Controls.Add(this.lbEmpty);
-            this.Controls.Add(this.btnGenerate);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.richTextBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -251,6 +266,7 @@
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Main_MouseUp);
             ((System.ComponentModel.ISupportInitialize)(this.numIterations)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numEquations)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnClose)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -274,6 +290,7 @@
         private System.ComponentModel.BackgroundWorker Generator;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label lbPassed;
+        private System.Windows.Forms.PictureBox btnClose;
     }
 }
 
